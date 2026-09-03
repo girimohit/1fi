@@ -1,0 +1,105 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/client"
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  icon      String?
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id          String           @id @default(cuid())
+  name        String
+  slug        String           @unique
+  badge       String? //eg - New or bestseller
+  brand       String
+  categoryId  String
+  category    Category         @relation(fields: [categoryId], references: [id])
+  description String?
+  specs       Json?
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  variants    ProductVariant[]
+
+  @@index([categoryId])
+}
+
+model ProductVariant {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  title     String
+  sku       String  @unique
+  colorName String?
+  colorHex  String?
+
+  // Dynamic attributes
+  attributes Json @default("{}")
+  mrp        Int
+  price      Int
+
+  imageUrl      String // Main image
+  images        String[]          @default([]) // for gallery
+  isDefault     Boolean           @default(false)
+  stockQuantity Int               @default(10)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  emiPlans      EmiPlan[]
+  applications  PlanApplication[]
+
+  @@index([productId])
+}
+
+model EmiPlan {
+  id             String         @id @default(cuid())
+  variantId      String
+  variant        ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  tenureMonths   Int
+  interestRate   Decimal        @db.Decimal(5, 2)
+  cashbackAmount Int?
+  cashbackText   String? // eg -Additional cashback of 7,500
+  tag            String? // eg- Zero Cost EMI
+  // isRecommended   Boolean           @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  applications PlanApplication[]
+
+  @@index([variantId])
+}
+
+model PlanApplication {
+  id             String            @id @default(cuid())
+  variantId      String
+  variant        ProductVariant    @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  emiPlanId      String
+  emiPlan        EmiPlan           @relation(fields: [emiPlanId], references: [id], onDelete: Cascade)
+  applicantName  String
+  applicantPhone String
+  applicantEmail String?
+  status         ApplicationStatus @default(SUBMITTED)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([variantId])
+  @@index([emiPlanId])
+}

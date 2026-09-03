@@ -6,26 +6,10 @@ export default defineConfig({
 
   migrations: {
     path: "prisma/migrations",
+    seed: "tsx prisma/seed.ts"
   },
 
   datasource: {
     url: env("DATABASE_URL"),
   },
 });
-
-// import { definePrismaConfig } from "prisma/config";
-// import 'dotenv/config';
-// import { env } from "process"; 
-
-// export default definePrismaConfig({
-//   schema: "prisma/schema.prisma",
-//   skills: {
-//     agents: ["claude", "cursor", "agents", "devin"],
-//   },
-//   datasource: {
-//     url: env('DATABASE_URL')
-//   },
-//   migrations: {
-//     path: 'prisma/migrations',
-//   },
-// });

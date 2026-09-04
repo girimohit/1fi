@@ -5,13 +5,11 @@ A full-stack ecommerce application where users can browse products, select varia
 ## Tech Stack
 
 - Next.js
-- React
+- React.js
 - TypeScript
 - Tailwind CSS
-- Next.js API Routes
-- PostgreSQL
+- NeonDB (PostgreSQL)
 - Prisma
-- Lucide React
 
 ## Setup and Run
 
@@ -66,16 +64,12 @@ Open `http://localhost:3000`.
 
 ### Get Products
 
-```http
-GET /api/products
-```
+> GET /api/products
 
 Optional filters:
 
-```http
-GET /api/products?category=smartphones
-GET /api/products?search=iphone
-```
+> GET /api/products?category=smartphones \
+> GET /api/products?search=iphone
 
 Example response:
 
@@ -107,9 +101,7 @@ Example response:
 
 ### Get Categories
 
-```http
-GET /api/categories
-```
+> GET /api/categories
 
 Example response:
 
@@ -133,15 +125,10 @@ Example response:
 
 ### Get Product
 
-```http
-GET /api/products/:slug
-```
+> GET /api/products/:slug
 
 Example:
-
-```http
-GET /api/products/iphone-17-pro
-```
+> GET /api/products/iphone-17-pro
 
 Example response:
 
@@ -172,9 +159,7 @@ Example response:
 
 ### Submit EMI Application
 
-```http
-POST /api/applications
-```
+> POST /api/applications
 
 Example request:
 
@@ -210,11 +195,5 @@ Example response:
 
 `ProductVariant.attributes` uses JSON for flexible variant attributes such as storage, RAM, size, or material.
 
-Application statuses:
 
-```text
-SUBMITTED
-PENDING
-APPROVED
-REJECTED
-```
+> The database schema and seed file have been added to the prisma folder

@@ -12,24 +12,30 @@ export default function Navbar() {
     const navLinks = [
         { label: "Home", href: "/" },
         { label: "About Us", href: "/#about" },
-        // { label: "How it Works", href: "/#how-it-works" },
         { label: "Shop", href: "/#products" },
     ];
 
     return (
-        <header className="sticky top-3 z-40 w-full px-4">
-            <div className="mx-auto w-full md:w-[72%] max-w-5xl">
-                <nav className="flex items-center justify-between rounded-2xl border border-[var(--border)] bg-white/95 px-4 py-2 shadow-md backdrop-blur-md transition-all sm:px-6">
-                    <Link href="/" className="flex items-center gap-2.5 group">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--primary)] text-white shadow-xs transition group-hover:scale-105">
-                            <span className="text-sm font-black tracking-tight">
+        <header className="sticky top-0 z-40 w-full px-3 py-3 sm:px-4">
+            <div className="mx-auto w-full max-w-7xl">
+                <nav className="flex min-h-12 items-center justify-between rounded-xl border border-[var(--border)] bg-white/95 px-3 py-2 shadow-sm backdrop-blur-md sm:min-h-14 sm:px-5">
+
+                    {/* Logo */}
+                    <Link
+                        href="/"
+                        className="flex shrink-0 items-center gap-2.5"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--primary)] text-white sm:h-9 sm:w-9">
+                            <span className="text-xs font-black tracking-tight sm:text-sm">
                                 1Fi
                             </span>
                         </div>
+
                     </Link>
 
-                    {/* Navigation Links */}
-                    <div className="hidden md:flex items-center gap-2 lg:gap-5">
+                    {/* Desktop Navigation */}
+                    <div className="hidden items-center gap-1 md:flex lg:gap-3">
                         {navLinks.map((link) => {
                             const isActive =
                                 link.href === "/"
@@ -40,9 +46,9 @@ export default function Navbar() {
                                 <Link
                                     key={link.label}
                                     href={link.href}
-                                    className={`px-2 py-1 text-sm font-semibold transition-colors ${isActive
-                                            ? "text-[var(--primary)]"
-                                            : "text-black hover:text-[var(--primary)]"
+                                    className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${isActive
+                                            ? "bg-[var(--primary-light)] text-[var(--primary)]"
+                                            : "text-[var(--text-secondary)] hover:bg-[var(--gray)] hover:text-[var(--primary)]"
                                         }`}
                                 >
                                     {link.label}
@@ -51,13 +57,14 @@ export default function Navbar() {
                         })}
                     </div>
 
-                    {/* CTA */}
-                    <div className="hidden md:flex items-center">
+                    {/* Desktop CTA */}
+                    <div className="hidden md:flex">
                         <Link
                             href="/"
-                            className="group flex items-center gap-1.5 rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-bold text-white shadow-xs transition hover:opacity-95 active:scale-[0.98]"
+                            className="group flex items-center gap-1.5 rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-bold text-white transition hover:opacity-90 active:scale-[0.98]"
                         >
                             <span>Shop Now</span>
+
                             <ArrowUpRight
                                 size={14}
                                 className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
@@ -65,40 +72,59 @@ export default function Navbar() {
                         </Link>
                     </div>
 
-                    {/* Mobile Hamburger Toggle */}
-                    <div className="flex md:hidden">
-                        <button
-                            type="button"
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="rounded-lg p-1 text-black hover:bg-gray-100"
-                            aria-label="Toggle navigation menu"
-                        >
-                            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-                        </button>
-                    </div>
+                    {/* Mobile Menu Button */}
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setMobileMenuOpen((open) => !open)
+                        }
+                        className="flex h-9 w-9 items-center justify-center rounded-lg text-[var(--text-primary)] transition hover:bg-[var(--gray)] md:hidden"
+                        aria-label="Toggle navigation menu"
+                        aria-expanded={mobileMenuOpen}
+                    >
+                        {mobileMenuOpen ? (
+                            <X size={20} />
+                        ) : (
+                            <Menu size={20} />
+                        )}
+                    </button>
                 </nav>
 
-                {/* Mobile Drawer Menu */}
+                {/* Mobile Menu */}
                 {mobileMenuOpen && (
-                    <div className="mt-2 rounded-2xl border border-[var(--border)] bg-white p-3 shadow-lg md:hidden">
-                        <div className="flex flex-col gap-1">
-                            {navLinks.map((link) => (
-                                <Link
-                                    key={link.label}
-                                    href={link.href}
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className="rounded-lg px-3 py-2 text-sm font-semibold text-black hover:bg-[var(--primary-light)] hover:text-[var(--primary)]"
-                                >
-                                    {link.label}
-                                </Link>
-                            ))}
+                    <div className="mt-2 overflow-hidden rounded-xl border border-[var(--border)] bg-white p-2 shadow-md md:hidden">
+                        <div className="flex flex-col">
+                            {navLinks.map((link) => {
+                                const isActive =
+                                    link.href === "/"
+                                        ? pathname === "/"
+                                        : pathname.startsWith(link.href);
+
+                                return (
+                                    <Link
+                                        key={link.label}
+                                        href={link.href}
+                                        onClick={() =>
+                                            setMobileMenuOpen(false)
+                                        }
+                                        className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition ${isActive
+                                                ? "bg-[var(--primary-light)] text-[var(--primary)]"
+                                                : "text-[var(--text-primary)] hover:bg-[var(--gray)]"
+                                            }`}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                );
+                            })}
 
                             <Link
                                 href="/"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="mt-2 flex items-center justify-center gap-1 rounded-lg bg-[var(--primary)] py-2 text-sm font-bold text-white shadow-xs"
+                                onClick={() =>
+                                    setMobileMenuOpen(false)
+                                }
+                                className="mt-2 flex items-center justify-center gap-1.5 rounded-lg bg-[var(--primary)] py-2.5 text-sm  text-white"
                             >
-                                <span>Shop Now</span>
+                                Shop Now
                                 <ArrowUpRight size={14} />
                             </Link>
                         </div>
@@ -106,6 +132,5 @@ export default function Navbar() {
                 )}
             </div>
         </header>
-
     );
 }

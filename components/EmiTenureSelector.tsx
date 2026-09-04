@@ -1,23 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { CreditCard } from "lucide-react";
+import { CreditCard, Check } from "lucide-react";
 
 import type { EmiPlan } from "@/types/product";
+import { calculateEmi, formatPrice } from "@/lib/emi";
 
 type EmiTenureSelectorProps = {
     plans: EmiPlan[];
+    productPrice: number;
+    onProceed: (plan: EmiPlan) => void;
 };
-
-function formatPrice(price: number) {
-    return new Intl.NumberFormat("en-IN").format(price);
-}
 
 export default function EmiTenureSelector({
     plans,
+    productPrice,
+    onProceed,
 }: EmiTenureSelectorProps) {
     const [selectedPlan, setSelectedPlan] = useState<EmiPlan | null>(
-        plans[0] || null
+        plans[0] ?? null
     );
 
     if (!plans.length) {
@@ -28,32 +29,51 @@ export default function EmiTenureSelector({
         );
     }
 
+    const selectedEmi = selectedPlan
+        ? calculateEmi(
+            productPrice,
+            Number(selectedPlan.interestRate),
+            selectedPlan.tenureMonths
+        )
+        : 0;
+
     return (
         <div className="rounded-xl border border-[var(--border)] bg-white p-5">
-            <div className="flex items-center gap-2">
-                <CreditCard
-                    size={18}
-                    className="text-[var(--primary)]"
-                />
+            <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                    <CreditCard
+                        size={18}
+                        className="text-[var(--primary)]"
+                    />
 
-                <p className="font-semibold">
-                    Choose EMI Tenure
-                </p>
+                    <p className="font-semibold">Choose EMI Tenure</p>
+                </div>
+
+                <span className="text-xs text-[var(--text-muted)]">
+                    Flexible plans
+                </span>
             </div>
 
             <div className="mt-4 divide-y divide-[var(--border)]">
                 {plans.map((plan) => {
                     const selected = selectedPlan?.id === plan.id;
 
+                    const monthlyEmi = calculateEmi(
+                        productPrice,
+                        Number(plan.interestRate),
+                        plan.tenureMonths
+                    );
+
                     return (
                         <button
                             key={plan.id}
+                            type="button"
                             onClick={() => setSelectedPlan(plan)}
                             className="flex w-full items-center justify-between gap-4 py-4 text-left"
                         >
                             <div className="flex items-center gap-3">
                                 <span
-                                    className={`flex h-5 w-5 items-center justify-center rounded-full border ${selected
+                                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${selected
                                         ? "border-[var(--primary)]"
                                         : "border-gray-300"
                                         }`}
@@ -65,23 +85,19 @@ export default function EmiTenureSelector({
 
                                 <div>
                                     <p className="text-sm font-semibold">
-                                        ₹
-                                        {formatPrice(
-                                            Math.round(
-                                                plan.cashbackAmount
-                                                    ? 0
-                                                    : 0
-                                            )
-                                        )}
-                                    </p>
-
-                                    <p className="text-sm text-[var(--text-secondary)]">
+                                        ₹{formatPrice(monthlyEmi)} ×{" "}
                                         {plan.tenureMonths} months
                                     </p>
+
+                                    {plan.cashbackText && (
+                                        <p className="mt-1 text-xs text-green-600">
+                                            {plan.cashbackText}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
-                            <span className="rounded-md bg-orange-50 px-2 py-1 text-xs font-semibold text-orange-600">
+                            <span className="shrink-0 rounded-md bg-orange-50 px-2 py-1 text-xs font-semibold text-orange-600">
                                 {Number(plan.interestRate) === 0
                                     ? "0% EMI"
                                     : `${plan.interestRate}%`}
@@ -92,10 +108,41 @@ export default function EmiTenureSelector({
             </div>
 
             {selectedPlan && (
-                <button className="mt-4 w-full rounded-lg bg-[var(--primary)] py-3 text-sm font-semibold text-white transition hover:opacity-90">
-                    Proceed with {selectedPlan.tenureMonths} months EMI
-                </button>
+                <>
+                    <div className="mt-4 rounded-lg bg-[var(--primary-light)] px-4 py-3">
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm text-[var(--text-secondary)]">
+                                Monthly EMI
+                            </span>
+
+                            <span className="font-bold text-[var(--primary)]">
+                                ₹{formatPrice(selectedEmi)}
+                            </span>
+                        </div>
+
+                        {selectedPlan.cashbackAmount && (
+                            <div className="mt-1 flex items-center justify-between text-xs">
+                                <span className="text-[var(--text-secondary)]">
+                                    Cashback
+                                </span>
+
+                                <span className="font-semibold text-green-600">
+                                    ₹{formatPrice(selectedPlan.cashbackAmount)}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={() => onProceed(selectedPlan)}
+                        className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--primary)] py-3 text-sm font-semibold text-white transition hover:opacity-90"
+                    >
+                        <Check size={17} />
+                        Proceed with {selectedPlan.tenureMonths} months EMI
+                    </button>
+                </>
             )}
         </div>
     );
-}
+}        

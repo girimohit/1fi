@@ -56,6 +56,19 @@ export async function GET(request: NextRequest) {
             price: true,
             imageUrl: true,
             stockQuantity: true,
+            emiPlans: {
+              orderBy: {
+                tenureMonths: "asc",
+              },
+              select: {
+                id: true,
+                tenureMonths: true,
+                interestRate: true,
+                cashbackAmount: true,
+                cashbackText: true,
+                tag: true,
+              },
+            },
           },
           take: 1,
         },

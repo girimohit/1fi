@@ -103,7 +103,7 @@ export default function ApplicationModal({
                             Your EMI application has been received successfully.
                         </p>
 
-                        <div className="mt-5 rounded-lg bg-[var(--surface-muted)] p-3 text-left">
+                        <div className="mt-5 rounded-lg bg-[var(--gray)] p-3 text-left">
                             <p className="text-xs text-[var(--text-muted)]">
                                 Reference ID
                             </p>
@@ -149,7 +149,7 @@ export default function ApplicationModal({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="rounded-full p-2 hover:bg-[var(--surface-muted)]"
+                        className="rounded-full p-2 hover:bg-[var(--gray)]"
                     >
                         <X size={19} />
                     </button>

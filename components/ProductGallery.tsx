@@ -1,87 +1,54 @@
 "use client";
 
 import { useState } from "react";
-import { Star } from "lucide-react";
+import type { ProductVariant } from "@/types/product";
 
 type ProductGalleryProps = {
-    images: string[];
-    productName: string;
-    cashback?: string;
-    rating?: number;
+    variant: ProductVariant;
 };
 
 export default function ProductGallery({
-    images,
-    productName,
-    cashback = "1% Cashback",
-    rating = 4.2,
+    variant,
 }: ProductGalleryProps) {
-    const [activeImage, setActiveImage] = useState(0);
+    const images = [variant.imageUrl, ...variant.images].filter(
+        (image, index, array) => array.indexOf(image) === index
+    );
 
-    const displayImages = images.length > 0 ? images : ["/placeholder.png"];
+    const [activeImage, setActiveImage] = useState(images[0]);
 
     return (
-        <div className="relative">
-            <div className="flex gap-4">
-                {/* Thumbnail column */}
-                <div className="hidden w-20 shrink-0 flex-col gap-3 sm:flex">
-                    {displayImages.map((image, index) => (
-                        <button
-                            key={`${image}-${index}`}
-                            type="button"
-                            onClick={() => setActiveImage(index)}
-                            className={`flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl border bg-white transition ${activeImage === index
+        <div className="flex gap-4">
+            <div className="hidden w-20 flex-col gap-3 sm:flex">
+                {images.map((image, index) => (
+                    <button
+                        key={`${image}-${index}`}
+                        onClick={() => setActiveImage(image)}
+                        className={`flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl border bg-white ${activeImage === image
                                 ? "border-[var(--primary)]"
-                                : "border-[var(--border)] hover:border-[var(--lavender)]"
-                                }`}
-                        >
-                            <img
-                                src={image}
-                                alt={`${productName} view ${index + 1}`}
-                                className="h-full w-full object-contain p-1"
-                            />
-                        </button>
-                    ))}
-                </div>
-
-                <div className="relative flex min-h-[420px] flex-1 items-center justify-center rounded-2xl bg-white">
-                    <img
-                        src={displayImages[activeImage]}
-                        alt={productName}
-                        className="max-h-[500px] w-full object-contain"
-                    />
-
-                    {/* Cashback */}
-                    <span className="absolute bottom-4 left-4 rounded-md bg-[#159ac0] px-3 py-1.5 text-sm font-semibold text-white">
-                        {cashback}
-                    </span>
-
-                    {/* Rating */}
-                    <span className="absolute bottom-4 right-4 inline-flex items-center gap-1 rounded-md bg-white px-2.5 py-1.5 text-sm font-medium shadow-sm">
-                        {rating.toFixed(1)}
-                        <Star
-                            size={13}
-                            fill="#f5b800"
-                            className="text-[#f5b800]"
+                                : "border-[var(--border)]"
+                            }`}
+                    >
+                        <img
+                            src={image}
+                            alt={`${variant.title} view ${index + 1}`}
+                            className="h-full w-full object-contain p-2"
                         />
-                    </span>
-                </div>
+                    </button>
+                ))}
             </div>
 
-            {/* Mobile thumbnails */}
-            <div className="mt-3 flex justify-center gap-1.5 sm:hidden">
-                {displayImages.map((image, index) => (
-                    <button
-                        key={`${image}-mobile-${index}`}
-                        type="button"
-                        onClick={() => setActiveImage(index)}
-                        className={`h-1.5 rounded-full transition-all ${activeImage === index
-                            ? "w-5 bg-[var(--text-primary)]"
-                            : "w-1.5 bg-[var(--lavender)]"
-                            }`}
-                        aria-label={`View image ${index + 1}`}
-                    />
-                ))}
+            <div className="relative flex min-h-[420px] flex-1 items-center justify-center rounded-2xl bg-[#fafafa] p-8">
+                <img
+                    src={activeImage}
+                    alt={variant.title}
+                    className="max-h-[500px] w-full object-contain"
+                />
+
+                {variant.colorName && (
+                    <span className="absolute bottom-5 left-5 rounded-md bg-[var(--primary)] px-3 py-1 text-xs font-semibold text-white">
+                        {variant.colorName}
+                    </span>
+                )}
             </div>
         </div>
     );

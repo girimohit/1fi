@@ -1,6 +1,5 @@
 "use client";
 
-import { Check, ChevronDown } from "lucide-react";
 import type { ProductVariant } from "@/types/product";
 
 type VariantSelectorProps = {
@@ -14,14 +13,14 @@ export default function VariantSelector({
     selectedVariant,
     onChange,
 }: VariantSelectorProps) {
-    // Unique color options
+    // Unique color options - only display if > 1 color
     const colorVariants = variants.filter(
         (v, idx, arr) =>
             v.colorName &&
             arr.findIndex((o) => o.colorName === v.colorName) === idx
     );
 
-    // Extract dynamic attributes (Storage, RAM, Processor, etc.)
+    // Extract dynamic attributes (Storage, RAM, etc.)
     const attributeKeys = Array.from(
         new Set(
             variants.flatMap((v) => Object.keys(v.attributes || {}))
@@ -29,7 +28,6 @@ export default function VariantSelector({
     );
 
     function selectColor(colorName: string) {
-        // Try to keep current attributes while changing color
         const match =
             variants.find(
                 (v) =>
@@ -51,82 +49,84 @@ export default function VariantSelector({
         if (match) onChange(match);
     }
 
+    const hasMultipleColors = colorVariants.length > 1;
+
     return (
-        <div className="space-y-4">
-            {/* Color & Variant Dropdown/Selector Grid */}
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {/* Color Selector */}
-                {colorVariants.length > 0 && (
-                    <div className="rounded-xl border border-[var(--border)] bg-white p-3">
-                        <label className="block text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
-                            Color / Finish
-                        </label>
-                        <div className="mt-2 flex flex-wrap items-center gap-2">
-                            {colorVariants.map((v) => {
-                                const isSelected = selectedVariant.colorName === v.colorName;
+        <div className="space-y-2 pt-1">
+            {/* Color Swatch Pills */}
+            {hasMultipleColors && (
+                <div>
+                    <span className="text-[11px] font-semibold text-[var(--text-muted)]">
+                        Color: <span className="text-[var(--text-primary)] font-medium">{selectedVariant.colorName}</span>
+                    </span>
+                    <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                        {colorVariants.map((v) => {
+                            const isSelected = selectedVariant.colorName === v.colorName;
+                            return (
+                                <button
+                                    key={v.id}
+                                    type="button"
+                                    onClick={() => selectColor(v.colorName!)}
+                                    className={`flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-medium transition ${
+                                        isSelected
+                                            ? "border-[var(--primary)] bg-[var(--primary-light)] text-[var(--primary)] font-semibold shadow-2xs"
+                                            : "border-[var(--border)] bg-white text-[var(--text-secondary)] hover:border-[var(--lavender)]"
+                                    }`}
+                                >
+                                    {v.colorHex && (
+                                        <span
+                                            className="h-2 w-2 rounded-full border border-black/10"
+                                            style={{ backgroundColor: v.colorHex }}
+                                        />
+                                    )}
+                                    <span>{v.colorName}</span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
+            {/* Spec/Storage Pills */}
+            {attributeKeys.map((key) => {
+                const uniqueValues = Array.from(
+                    new Set(
+                        variants
+                            .map((v) => v.attributes?.[key])
+                            .filter(Boolean)
+                    )
+                );
+
+                // Hide if only 1 option
+                if (uniqueValues.length <= 1) return null;
+
+                return (
+                    <div key={key}>
+                        <span className="text-[11px] font-semibold text-[var(--text-muted)]">
+                            {key}: <span className="text-[var(--text-primary)] font-medium">{selectedVariant.attributes?.[key]}</span>
+                        </span>
+                        <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                            {uniqueValues.map((val) => {
+                                const isSelected = selectedVariant.attributes?.[key] === val;
                                 return (
                                     <button
-                                        key={v.id}
+                                        key={val}
                                         type="button"
-                                        onClick={() => selectColor(v.colorName!)}
-                                        className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition ${
+                                        onClick={() => selectAttribute(key, val)}
+                                        className={`rounded-md border px-2 py-0.5 text-[11px] font-medium transition ${
                                             isSelected
-                                                ? "border-[var(--primary)] bg-[var(--primary-light)] text-[var(--primary)] shadow-2xs"
+                                                ? "border-[var(--primary)] bg-[var(--primary-light)] text-[var(--primary)] font-semibold shadow-2xs"
                                                 : "border-[var(--border)] bg-white text-[var(--text-secondary)] hover:border-[var(--lavender)]"
                                         }`}
                                     >
-                                        {v.colorHex && (
-                                            <span
-                                                className="h-3.5 w-3.5 rounded-full border border-black/10 shadow-2xs"
-                                                style={{ backgroundColor: v.colorHex }}
-                                            />
-                                        )}
-                                        <span>{v.colorName}</span>
+                                        {val}
                                     </button>
                                 );
                             })}
                         </div>
                     </div>
-                )}
-
-                {/* Attributes Selectors (Storage / RAM) */}
-                {attributeKeys.map((key) => {
-                    const uniqueValues = Array.from(
-                        new Set(
-                            variants
-                                .map((v) => v.attributes?.[key])
-                                .filter(Boolean)
-                        )
-                    );
-
-                    return (
-                        <div key={key} className="rounded-xl border border-[var(--border)] bg-white p-3">
-                            <label className="block text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
-                                {key} Option
-                            </label>
-                            <div className="mt-2 flex flex-wrap items-center gap-2">
-                                {uniqueValues.map((val) => {
-                                    const isSelected = selectedVariant.attributes?.[key] === val;
-                                    return (
-                                        <button
-                                            key={val}
-                                            type="button"
-                                            onClick={() => selectAttribute(key, val)}
-                                            className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${
-                                                isSelected
-                                                    ? "border-[var(--primary)] bg-[var(--primary-light)] text-[var(--primary)] shadow-2xs"
-                                                    : "border-[var(--border)] bg-white text-[var(--text-secondary)] hover:border-[var(--lavender)]"
-                                            }`}
-                                        >
-                                            {val}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
+                );
+            })}
         </div>
     );
 }

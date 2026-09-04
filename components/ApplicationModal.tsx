@@ -90,9 +90,9 @@ export default function ApplicationModal({
         return (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
                 <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
+                    {/* <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
                         <Check size={24} />
-                    </div>
+                    </div> */}
 
                     <div className="mt-4 text-center">
                         <h2 className="text-xl font-bold">

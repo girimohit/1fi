@@ -98,7 +98,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                         View
                         <ArrowRight
                             size={14}
-                            className="transition-transform group-hover:translate-x-0.5"
+                            className="transition-transform "
                         />
                     </span>
                 </div>

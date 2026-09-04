@@ -44,8 +44,7 @@ export default function HomePage() {
 
     return products.filter((product) => {
       const categoryMatch =
-        !selectedCategory ||
-        product.category?.slug === selectedCategory;
+        !selectedCategory || product.category?.slug === selectedCategory;
 
       const searchMatch =
         !searchTerm ||
@@ -72,18 +71,14 @@ export default function HomePage() {
             </h1>
 
             <p className="mt-2 max-w-xl text-sm leading-5 text-[var(--text-secondary)] sm:mt-3 sm:text-base sm:leading-6">
-              Shop electronics and everyday essentials with flexible
-              EMI plans.
+              Shop electronics and everyday essentials with flexible EMI plans.
             </p>
           </div>
 
           {/* Search */}
           <div className="mt-5 max-w-2xl sm:mt-7">
             <div className="flex h-11 items-center rounded-xl border border-[var(--border)] bg-[var(--gray)] px-3 transition focus-within:border-[var(--primary)] focus-within:bg-white sm:h-12">
-              <Search
-                size={18}
-                className="shrink-0 text-[var(--text-muted)]"
-              />
+              <Search size={18} className="shrink-0 text-[var(--text-muted)]" />
 
               <input
                 type="text"
@@ -112,16 +107,12 @@ export default function HomePage() {
         {/* Categories */}
         <div>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-semibold sm:text-base">
-              Categories
-            </h2>
+            <h2 className="text-sm font-semibold sm:text-base">Categories</h2>
 
             {!loading && (
               <p className="text-xs text-[var(--text-muted)]">
                 {filteredProducts.length}{" "}
-                {filteredProducts.length === 1
-                  ? "product"
-                  : "products"}
+                {filteredProducts.length === 1 ? "product" : "products"}
               </p>
             )}
           </div>
@@ -136,9 +127,7 @@ export default function HomePage() {
         {/* Error */}
         {error ? (
           <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-5 text-center">
-            <p className="text-sm font-medium text-red-700">
-              {error}
-            </p>
+            <p className="text-sm font-medium text-red-700">{error}</p>
 
             <button
               type="button"
@@ -169,14 +158,9 @@ export default function HomePage() {
         ) : filteredProducts.length === 0 ? (
           /* Empty */
           <div className="mt-7 flex flex-col items-center rounded-xl border border-dashed border-[var(--border)] bg-white px-5 py-12 text-center">
-            <PackageOpen
-              size={30}
-              className="text-[var(--text-muted)]"
-            />
+            <PackageOpen size={30} className="text-[var(--text-muted)]" />
 
-            <h3 className="mt-3 text-sm font-semibold">
-              No products found
-            </h3>
+            <h3 className="mt-3 text-sm font-semibold">No products found</h3>
 
             <p className="mt-1 max-w-xs text-xs leading-5 text-[var(--text-muted)]">
               Try a different search or select another category.
@@ -197,10 +181,7 @@ export default function HomePage() {
           /* Products */
           <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
             {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-              />
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         )}

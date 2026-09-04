@@ -16,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "1Fi - Shopping with Mutual Fund Backed EMIs",
-  description: "Avail flexible, zero down-payment EMI plans backed by your mutual fund investments with 1Fi.",
+  description:
+    "Avail flexible, zero down-payment EMI plans backed by your mutual fund investments with 1Fi.",
 };
 
 export default function RootLayout({

@@ -200,7 +200,6 @@ Example response:
 }
 ```
 
-
 | Model             | Purpose                                        |
 | ----------------- | ---------------------------------------------- |
 | `Category`        | Product categories                             |
@@ -219,4 +218,3 @@ PENDING
 APPROVED
 REJECTED
 ```
-

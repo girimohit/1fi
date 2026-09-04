@@ -26,14 +26,19 @@ export default function Navbar() {
             onClick={() => setMobileMenuOpen(false)}
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--primary)] text-white sm:h-9 sm:w-9">
-              <span className="text-xs font-black tracking-tight sm:text-sm">1Fi</span>
+              <span className="text-xs font-black tracking-tight sm:text-sm">
+                1Fi
+              </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-1 md:flex lg:gap-3">
             {navLinks.map((link) => {
-              const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(link.href);
 
               return (
                 <Link
@@ -83,7 +88,10 @@ export default function Navbar() {
           <div className="mt-2 overflow-hidden rounded-xl border border-[var(--border)] bg-white p-2 shadow-md md:hidden">
             <div className="flex flex-col">
               {navLinks.map((link) => {
-                const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+                const isActive =
+                  link.href === "/"
+                    ? pathname === "/"
+                    : pathname.startsWith(link.href);
 
                 return (
                   <Link

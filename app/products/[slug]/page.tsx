@@ -119,9 +119,9 @@ export default function ProductPage() {
 
     return (
         <main className="min-h-screen bg-white pb-20">
-            <div className="w-full max-w-[1500px] mx-auto px-4 py-5 sm:px-8 lg:px-12">
+            <div className="w-full max-w-[1450px] mx-auto px-4  py-5 sm:px-8 lg:px-12">
                 {/* Modern Breadcrumb */}
-                    <nav className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-[var(--text-muted)]">
+                    <nav className="mb-6 pt-6 flex flex-wrap items-center gap-1.5 text-xs text-[var(--text-muted)]">
                     <Link href="/" className="transition hover:text-[var(--primary)]">Store</Link>
                     <ChevronRight size={12} className="text-gray-400" />
                     <Link href="/" className="transition hover:text-[var(--primary)]">

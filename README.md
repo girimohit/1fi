@@ -1,36 +1,222 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 1Fi EMI Commerce Platform
 
-## Getting Started
+A full-stack ecommerce application where users can browse products, select variants, view EMI plans, calculate monthly installments, and submit EMI applications.
 
-First, run the development server:
+## Tech Stack
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- Next.js API Routes
+- PostgreSQL
+- Prisma
+- Lucide React
+
+## Setup and Run
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/girimohit/1fi.git
+cd 1fi
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+
+Create a `.env` file:
+
+```env
+DATABASE_URL="your_postgresql_connection_string"
+```
+
+### 4. Generate Prisma Client
+
+```bash
+npx prisma generate
+```
+
+### 5. Run database migrations
+
+```bash
+npx prisma migrate dev
+```
+
+### 6. Seed the database
+
+```bash
+npx prisma db seed
+```
+
+### 7. Start the application
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## API Endpoints
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Get Products
 
-## Learn More
+```http
+GET /api/products
+```
 
-To learn more about Next.js, take a look at the following resources:
+Optional filters:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```http
+GET /api/products?category=smartphones
+GET /api/products?search=iphone
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Example response:
 
-## Deploy on Vercel
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "cm123",
+      "name": "iPhone 17 Pro",
+      "slug": "iphone-17-pro",
+      "brand": "Apple",
+      "category": {
+        "name": "Smartphones",
+        "slug": "smartphones"
+      },
+      "variants": [
+        {
+          "id": "var123",
+          "title": "256 GB",
+          "price": 129900,
+          "mrp": 134900
+        }
+      ]
+    }
+  ]
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Get Categories
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```http
+GET /api/categories
+```
+
+Example response:
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "cat123",
+      "name": "Smartphones",
+      "slug": "smartphones"
+    },
+    {
+      "id": "cat456",
+      "name": "Laptops",
+      "slug": "laptops"
+    }
+  ]
+}
+```
+
+### Get Product
+
+```http
+GET /api/products/:slug
+```
+
+Example:
+
+```http
+GET /api/products/iphone-17-pro
+```
+
+Example response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "name": "iPhone 17 Pro",
+    "slug": "iphone-17-pro",
+    "brand": "Apple",
+    "variants": [
+      {
+        "title": "256 GB",
+        "price": 129900,
+        "mrp": 134900,
+        "emiPlans": [
+          {
+            "tenureMonths": 6,
+            "interestRate": 0,
+            "cashbackAmount": 2000
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Submit EMI Application
+
+```http
+POST /api/applications
+```
+
+Example request:
+
+```json
+{
+  "variantId": "var123",
+  "emiPlanId": "emi123",
+  "applicantName": "John Doe",
+  "applicantPhone": "9876543210",
+  "applicantEmail": "john@example.com"
+}
+```
+
+Example response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "app123",
+    "status": "SUBMITTED"
+  }
+}
+```
+
+
+| Model             | Purpose                                        |
+| ----------------- | ---------------------------------------------- |
+| `Category`        | Product categories                             |
+| `Product`         | Product information                            |
+| `ProductVariant`  | SKU, pricing, images, attributes and inventory |
+| `EmiPlan`         | EMI tenure, interest rate and cashback         |
+| `PlanApplication` | EMI application details and status             |
+
+`ProductVariant.attributes` uses JSON for flexible variant attributes such as storage, RAM, size, or material.
+
+Application statuses:
+
+```text
+SUBMITTED
+PENDING
+APPROVED
+REJECTED
+```
+

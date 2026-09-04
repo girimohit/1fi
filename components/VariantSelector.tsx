@@ -1,8 +1,9 @@
 "use client";
 
+import { Check, ChevronDown } from "lucide-react";
 import type { ProductVariant } from "@/types/product";
 
-type VariantSelectorsProps = {
+type VariantSelectorProps = {
     variants: ProductVariant[];
     selectedVariant: ProductVariant;
     onChange: (variant: ProductVariant) => void;
@@ -12,163 +13,120 @@ export default function VariantSelector({
     variants,
     selectedVariant,
     onChange,
-}: VariantSelectorsProps) {
-    const attributes = Array.from(
+}: VariantSelectorProps) {
+    // Unique color options
+    const colorVariants = variants.filter(
+        (v, idx, arr) =>
+            v.colorName &&
+            arr.findIndex((o) => o.colorName === v.colorName) === idx
+    );
+
+    // Extract dynamic attributes (Storage, RAM, Processor, etc.)
+    const attributeKeys = Array.from(
         new Set(
-            variants.flatMap((variant) =>
-                Object.keys(variant.attributes || {})
-            )
+            variants.flatMap((v) => Object.keys(v.attributes || {}))
         )
     );
 
-    function getAvailableVariants(attribute: string, value: string) {
-        return variants.filter(
-            (variant) => variant.attributes?.[attribute] === value
-        );
+    function selectColor(colorName: string) {
+        // Try to keep current attributes while changing color
+        const match =
+            variants.find(
+                (v) =>
+                    v.colorName === colorName &&
+                    JSON.stringify(v.attributes) === JSON.stringify(selectedVariant.attributes)
+            ) || variants.find((v) => v.colorName === colorName);
+
+        if (match) onChange(match);
     }
 
-    function selectAttribute(attribute: string, value: string) {
-        const exactMatch = variants.find((variant) => {
-            if (variant.attributes?.[attribute] !== value) {
-                return false;
-            }
+    function selectAttribute(key: string, val: string) {
+        const match =
+            variants.find(
+                (v) =>
+                    v.colorName === selectedVariant.colorName &&
+                    v.attributes?.[key] === val
+            ) || variants.find((v) => v.attributes?.[key] === val);
 
-            return Object.entries(selectedVariant.attributes || {}).every(
-                ([key, currentValue]) => {
-                    if (key === attribute) {
-                        return currentValue === value;
-                    }
-
-                    return variant.attributes?.[key] === currentValue;
-                }
-            );
-        });
-
-        if (exactMatch) {
-            onChange(exactMatch);
-            return;
-        }
-
-        const fallback = getAvailableVariants(attribute, value)[0];
-
-        if (fallback) {
-            onChange(fallback);
-        }
+        if (match) onChange(match);
     }
 
     return (
-        <div className="space-y-6">
-            {selectedVariant.colorName && (
-                <div>
-                    <p className="mb-3 text-sm font-semibold">
-                        Color
-                    </p>
-
-                    <div className="flex flex-wrap gap-2">
-                        {variants
-                            .filter((variant) => variant.colorName)
-                            .map((variant) => {
-                                const selected =
-                                    variant.colorName === selectedVariant.colorName;
-
+        <div className="space-y-4">
+            {/* Color & Variant Dropdown/Selector Grid */}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {/* Color Selector */}
+                {colorVariants.length > 0 && (
+                    <div className="rounded-xl border border-[var(--border)] bg-white p-3">
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                            Color / Finish
+                        </label>
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                            {colorVariants.map((v) => {
+                                const isSelected = selectedVariant.colorName === v.colorName;
                                 return (
                                     <button
-                                        key={variant.id}
+                                        key={v.id}
                                         type="button"
-                                        onClick={() => onChange(variant)}
-                                        className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition ${selected
-                                                ? "border-[var(--primary)] bg-[var(--primary-light)]"
-                                                : "border-[var(--border)] bg-white hover:border-[var(--lavender)]"
-                                            }`}
+                                        onClick={() => selectColor(v.colorName!)}
+                                        className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition ${
+                                            isSelected
+                                                ? "border-[var(--primary)] bg-[var(--primary-light)] text-[var(--primary)] shadow-2xs"
+                                                : "border-[var(--border)] bg-white text-[var(--text-secondary)] hover:border-[var(--lavender)]"
+                                        }`}
                                     >
-                                        {variant.colorHex && (
+                                        {v.colorHex && (
                                             <span
-                                                className="h-4 w-4 rounded-full border border-gray-200"
-                                                style={{
-                                                    backgroundColor: variant.colorHex,
-                                                }}
+                                                className="h-3.5 w-3.5 rounded-full border border-black/10 shadow-2xs"
+                                                style={{ backgroundColor: v.colorHex }}
                                             />
                                         )}
-
-                                        {variant.colorName}
-                                    </button>
-                                );
-                            })}
-                    </div>
-                </div>
-            )}
-
-            {attributes.map((attribute) => {
-                const values = Array.from(
-                    new Set(
-                        variants
-                            .map(
-                                (variant) => variant.attributes?.[attribute]
-                            )
-                            .filter(Boolean)
-                    )
-                );
-
-                return (
-                    <div key={attribute}>
-                        <p className="mb-3 text-sm font-semibold">
-                            {attribute}
-                        </p>
-
-                        <div className="flex flex-wrap gap-2">
-                            {values.map((value) => {
-                                const selected =
-                                    selectedVariant.attributes?.[attribute] === value;
-
-                                const availableVariants = variants.filter(
-                                    (variant) => {
-                                        if (
-                                            variant.attributes?.[attribute] !== value
-                                        ) {
-                                            return false;
-                                        }
-
-                                        return Object.entries(
-                                            selectedVariant.attributes || {}
-                                        ).every(([key, currentValue]) => {
-                                            if (key === attribute) {
-                                                return true;
-                                            }
-
-                                            return (
-                                                variant.attributes?.[key] ===
-                                                currentValue
-                                            );
-                                        });
-                                    }
-                                );
-
-                                const available =
-                                    availableVariants.length > 0;
-
-                                return (
-                                    <button
-                                        key={value}
-                                        type="button"
-                                        disabled={!available}
-                                        onClick={() =>
-                                            selectAttribute(attribute, value)
-                                        }
-                                        className={`rounded-lg border px-4 py-2 text-sm transition ${selected
-                                                ? "border-[var(--primary)] bg-[var(--primary-light)] font-semibold text-[var(--primary)]"
-                                                : available
-                                                    ? "border-[var(--border)] bg-white hover:border-[var(--lavender)]"
-                                                    : "cursor-not-allowed border-[var(--border)] bg-gray-50 text-gray-300"
-                                            }`}
-                                    >
-                                        {value}
+                                        <span>{v.colorName}</span>
                                     </button>
                                 );
                             })}
                         </div>
                     </div>
-                );
-            })}
+                )}
+
+                {/* Attributes Selectors (Storage / RAM) */}
+                {attributeKeys.map((key) => {
+                    const uniqueValues = Array.from(
+                        new Set(
+                            variants
+                                .map((v) => v.attributes?.[key])
+                                .filter(Boolean)
+                        )
+                    );
+
+                    return (
+                        <div key={key} className="rounded-xl border border-[var(--border)] bg-white p-3">
+                            <label className="block text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                                {key} Option
+                            </label>
+                            <div className="mt-2 flex flex-wrap items-center gap-2">
+                                {uniqueValues.map((val) => {
+                                    const isSelected = selectedVariant.attributes?.[key] === val;
+                                    return (
+                                        <button
+                                            key={val}
+                                            type="button"
+                                            onClick={() => selectAttribute(key, val)}
+                                            className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${
+                                                isSelected
+                                                    ? "border-[var(--primary)] bg-[var(--primary-light)] text-[var(--primary)] shadow-2xs"
+                                                    : "border-[var(--border)] bg-white text-[var(--text-secondary)] hover:border-[var(--lavender)]"
+                                            }`}
+                                        >
+                                            {val}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 }

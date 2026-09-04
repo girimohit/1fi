@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CreditCard, Check } from "lucide-react";
+import { Check, CreditCard } from "lucide-react";
 
 import type { EmiPlan } from "@/types/product";
 import { calculateEmi, formatPrice } from "@/lib/emi";
@@ -23,8 +23,11 @@ export default function EmiTenureSelector({
 
     if (!plans.length) {
         return (
-            <div className="rounded-xl border border-[var(--border)] p-5">
+            <div className="rounded-xl border border-[var(--border)] bg-white p-5">
                 <p className="font-semibold">EMI plans unavailable</p>
+                <p className="mt-1 text-sm text-[var(--text-muted)]">
+                    No EMI plans are currently available
+                </p>
             </div>
         );
     }
@@ -38,23 +41,25 @@ export default function EmiTenureSelector({
         : 0;
 
     return (
-        <div className="rounded-xl border border-[var(--border)] bg-white p-5">
-            <div className="flex items-center justify-between gap-4">
+        <div className="rounded-xl border border-[var(--border)] bg-white p-4 sm:p-5">
+            <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                     <CreditCard
                         size={18}
                         className="text-[var(--primary)]"
                     />
 
-                    <p className="font-semibold">Choose EMI Tenure</p>
+                    <p className="text-sm font-semibold sm:text-base">
+                        Choose EMI Tenure
+                    </p>
                 </div>
 
-                <span className="text-xs text-[var(--text-muted)]">
+                <span className="hidden text-xs text-[var(--text-muted)] sm:block">
                     Flexible plans
                 </span>
             </div>
 
-            <div className="mt-4 divide-y divide-[var(--border)]">
+            <div className="mt-3 divide-y divide-[var(--border)]">
                 {plans.map((plan) => {
                     const selected = selectedPlan?.id === plan.id;
 
@@ -69,13 +74,13 @@ export default function EmiTenureSelector({
                             key={plan.id}
                             type="button"
                             onClick={() => setSelectedPlan(plan)}
-                            className="flex w-full items-center justify-between gap-4 py-4 text-left"
+                            className="flex w-full items-center justify-between gap-3 py-4 text-left"
                         >
-                            <div className="flex items-center gap-3">
+                            <div className="flex min-w-0 items-center gap-3">
                                 <span
                                     className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${selected
-                                        ? "border-[var(--primary)]"
-                                        : "border-gray-300"
+                                            ? "border-[var(--primary)]"
+                                            : "border-gray-300"
                                         }`}
                                 >
                                     {selected && (
@@ -83,14 +88,14 @@ export default function EmiTenureSelector({
                                     )}
                                 </span>
 
-                                <div>
+                                <div className="min-w-0">
                                     <p className="text-sm font-semibold">
                                         ₹{formatPrice(monthlyEmi)} ×{" "}
                                         {plan.tenureMonths} months
                                     </p>
 
                                     {plan.cashbackText && (
-                                        <p className="mt-1 text-xs text-green-600">
+                                        <p className="mt-1 truncate text-xs text-green-600">
                                             {plan.cashbackText}
                                         </p>
                                     )}
@@ -109,8 +114,8 @@ export default function EmiTenureSelector({
 
             {selectedPlan && (
                 <>
-                    <div className="mt-4 rounded-lg bg-[var(--primary-light)] px-4 py-3">
-                        <div className="flex items-center justify-between">
+                    <div className="mt-3 rounded-lg bg-[var(--primary-light)] px-4 py-3">
+                        <div className="flex items-center justify-between gap-3">
                             <span className="text-sm text-[var(--text-secondary)]">
                                 Monthly EMI
                             </span>
@@ -120,7 +125,7 @@ export default function EmiTenureSelector({
                             </span>
                         </div>
 
-                        {selectedPlan.cashbackAmount && (
+                        {selectedPlan.cashbackAmount != null && (
                             <div className="mt-1 flex items-center justify-between text-xs">
                                 <span className="text-[var(--text-secondary)]">
                                     Cashback
@@ -136,7 +141,7 @@ export default function EmiTenureSelector({
                     <button
                         type="button"
                         onClick={() => onProceed(selectedPlan)}
-                        className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--primary)] py-3 text-sm font-semibold text-white transition hover:opacity-90"
+                        className="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--primary)] px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
                     >
                         <Check size={17} />
                         Proceed with {selectedPlan.tenureMonths} months EMI
@@ -145,4 +150,4 @@ export default function EmiTenureSelector({
             )}
         </div>
     );
-}        
+}

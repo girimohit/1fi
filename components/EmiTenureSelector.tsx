@@ -42,7 +42,7 @@ export default function EmiTenureSelector({
                         Select EMI Plan
                     </h3>
                     <p className="text-xs text-[var(--text-muted)]">
-                        ₹0 Down Payment • Backed by 1Fi Mutual Funds
+                        ₹0 Down Payment
                     </p>
                 </div>
                 <span className="text-xs font-semibold text-[var(--primary)]">
@@ -127,10 +127,6 @@ export default function EmiTenureSelector({
                         <ArrowRight size={15} />
                     </button>
 
-                    <div className="flex items-center justify-center gap-1.5 pt-2 text-[11px] text-[var(--text-muted)]">
-                        <ShieldCheck size={13} className="text-[var(--primary)]" />
-                        <span>Instant approval backed by Mutual Funds</span>
-                    </div>
                 </div>
             )}
         </div>

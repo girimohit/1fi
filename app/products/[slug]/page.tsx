@@ -243,8 +243,7 @@ export default function ProductPage() {
                             </div>
 
                             <p className="mt-1 text-[11px] leading-4 text-[var(--text-muted)]">
-                                Inclusive of all taxes • Free shipping
-                                across India
+                                Inclusive of all taxes 
                             </p>
                         </div>
 

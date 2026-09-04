@@ -19,9 +19,7 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
     console.log("🌱 Seeding database...");
 
-    // --------------------------------------------------
     // Categories
-    // --------------------------------------------------
 
     const smartphones = await prisma.category.create({
         data: {
@@ -55,9 +53,7 @@ async function main() {
         },
     });
 
-    // --------------------------------------------------
     // Products
-    // --------------------------------------------------
 
     await prisma.product.create({
         data: {
@@ -219,9 +215,7 @@ async function main() {
         },
     });
 
-    // --------------------------------------------------
     // Samsung Galaxy S24 Ultra
-    // --------------------------------------------------
 
     await prisma.product.create({
         data: {
@@ -333,9 +327,7 @@ async function main() {
         },
     });
 
-    // --------------------------------------------------
     // Google Pixel
-    // --------------------------------------------------
 
     await prisma.product.create({
         data: {
@@ -440,9 +432,7 @@ async function main() {
         },
     });
 
-    // --------------------------------------------------
     // MacBook Air
-    // --------------------------------------------------
 
     await prisma.product.create({
         data: {
@@ -549,9 +539,7 @@ async function main() {
         },
     });
 
-    // --------------------------------------------------
     // Sony Headphones
-    // --------------------------------------------------
 
     await prisma.product.create({
         data: {
@@ -649,9 +637,7 @@ async function main() {
         },
     });
 
-    // --------------------------------------------------
     // LG Washing Machine
-    // --------------------------------------------------
 
     await prisma.product.create({
         data: {
